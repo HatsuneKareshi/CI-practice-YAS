@@ -6,11 +6,11 @@ on:
     paths:
       - 'cart/**'
       # any pushes to any, matches anything within cart recursively
-    pull_request:
-      branches: ["main"]
-      paths:
-        - 'cart/**'
-        # any pull requests to main, matches anything within cart recursively
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'cart/**'
+      # any pull requests to main, matches anything within cart recursively
 
 jobs:
   build-and-test:
