@@ -1,0 +1,38 @@
+name: cart CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'cart/**'
+      # any pushes to main, matches anything within cart recursively
+    pull_request:
+      branches: ["main"]
+      paths:
+        - 'cart/**'
+        # any pull requests to main, matches anything within cart recursively
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+        
+    - name: Build and Test Cart Service
+      # -pl cart: Only build cart project
+      # -am: Also make dependencies (build common-library if needed)
+      run: ./mvnw -B clean verify -pl cart -am
+      
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cart-test-results
+        path: cart/target/surefire-reports/*.xml
