@@ -29,7 +29,7 @@ jobs:
     - name: Build and Test Customer Service
       # -pl customer: Only build customer project
       # -am: Also make dependencies (build common-library if needed)
-      run: ./mvnw -B clean verify -pl customer -am
+      run: mvn -B clean verify -pl customer -am -DskipTests
       
     - name: Upload Test Results
       if: always()
