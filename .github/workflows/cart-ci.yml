@@ -25,11 +25,15 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: 'maven'
+    - name: Debug Info
+      run: |
+        pwd
+        ls -la
         
     - name: Build and Test Cart Service
       # -pl cart: Only build cart project
       # -am: Also make dependencies (build common-library if needed)
-      run: ./mvn -B clean verify -pl cart -am # switching to system maven
+      run: mvn -B clean verify -pl cart -am # switching to system maven
       
     - name: Upload Test Results
       if: always()
