@@ -1,0 +1,30 @@
+name: storefront ci
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'storefront/**'
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'storefront/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'    # These apps use Node 18 based on package.json
+        cache: 'npm'
+        cache-dependency-path: 'storefront/package-lock.json'
+        
+    - name: Install dependencies
+      working-directory: ./storefront
+      run: npm ci
+        
+    - name: Build Next.js app
+      working-directory: ./storefront
+      run: npm run build
