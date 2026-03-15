@@ -45,7 +45,7 @@ jobs:
           customer/target/*-reports/*.xml
           customer/target/site/jacoco/*
 
-    - name: enforce minimum coverage and PR comment
+    - name: PR comment jacoco coverage
       id: jacoco
       uses: madrapps/jacoco-report@v1.7.2
       with:
@@ -54,13 +54,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 70
         title: "customer coverage"
-
-    - name: Fail PR if overall coverage is less than 70%
-      if: ${{ steps.jacoco.outputs.coverage-overall < 70.0 }}
-      uses: actions/github-script@v6
-      with:
-        script: |
-          core.setFailed('Overall coverage is less than 70%!')
         
     - name: add jacoco coverage to job summary
       run: |
@@ -94,3 +87,10 @@ jobs:
       with:
         name: customer-owasp-report
         path: customer/target/dependency-check-report.html
+
+    - name: Fail PR if overall coverage is less than 70%
+      if: ${{ steps.jacoco.outputs.coverage-overall < 70.0 }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.setFailed('Overall coverage is less than 70%!')
