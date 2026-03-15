@@ -37,7 +37,7 @@ jobs:
     - name: Build and Test backoffice-bff Service
       # -pl backoffice-bff: Only build backoffice-bff project
       # -am: Also make dependencies (build common-library if needed)
-      run: mvn -B clean verify -pl backoffice-bff -am # switching to system maven
+      run: mvn -B clean install -pl backoffice-bff -am # switching to system maven
       
     - name: Upload Test Results
       if: always()
