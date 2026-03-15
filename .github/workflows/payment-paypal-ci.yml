@@ -64,6 +64,20 @@ jobs:
       with:
         script: |
           core.setFailed('Overall coverage is less than 70%!')
+    
+    - name: add jacoco coverage to job summary
+      run: |
+        echo "### Code Coverage Results" >> $GITHUB_STEP_SUMMARY
+        echo "- **Overall Coverage:** ${{ steps.jacoco.outputs.coverage-overall }}%" >> $GITHUB_STEP_SUMMARY
+        echo "- **Changed Files Coverage:** ${{ steps.jacoco.outputs.coverage-changed-files }}%" >> $GITHUB_STEP_SUMMARY
+
+    - name: publish test results
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: payment-paypal/target/*-reports/TEST-*.xml
+        detailed_summary: true
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cache OWASP NVD DB
       uses: actions/cache@v4
