@@ -57,7 +57,13 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 70
         title: "promotion coverage"
-        fail_on_min_coverage: true
+
+    - name: Fail PR if overall coverage is less than 70%
+      if: ${{ steps.jacoco.outputs.coverage-overall < 70.0 }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.setFailed('Overall coverage is less than 70%!')
 
     - name: Cache OWASP NVD DB
       uses: actions/cache@v4
