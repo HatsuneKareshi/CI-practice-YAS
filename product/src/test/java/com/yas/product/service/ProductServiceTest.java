@@ -112,7 +112,9 @@ class ProductServiceTest {
                 "SKU-123", "GTIN-123", 100.0, com.yas.product.model.enumeration.DimensionUnit.CM, 10.0, 10.0, 10.0,
                 100.0,
                 true, true, true, true, true,
-                "Meta Title", "Meta Keyword", "Meta Desc", 1L, null, null, null, null, null,
+                "Meta Title", "Meta Keyword", "Meta Desc", 1L, java.util.Collections.emptyList(),
+                java.util.Collections.emptyList(), java.util.Collections.emptyList(), java.util.Collections.emptyList(),
+                java.util.Collections.emptyList(),
                 1L);
 
         when(brandRepository.findById(1L)).thenReturn(Optional.of(new com.yas.product.model.Brand()));
@@ -138,7 +140,9 @@ class ProductServiceTest {
                 "Updated Product", "updated-product", 200.0, true, true, true, true, true,
                 1L, List.of(1L), "Short Desc", "Description", "Specs", "SKU-321", "GTIN-321",
                 100.0, com.yas.product.model.enumeration.DimensionUnit.CM, 10.0, 10.0, 10.0,
-                "Meta", "Meta", "Meta", 1L, null, null, null, null, null, 1L);
+                "Meta", "Meta", "Meta", 1L, java.util.Collections.emptyList(), java.util.Collections.emptyList(),
+                java.util.Collections.emptyList(), java.util.Collections.emptyList(), java.util.Collections.emptyList(),
+                1L);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(brandRepository.findById(1L)).thenReturn(Optional.of(new com.yas.product.model.Brand()));
