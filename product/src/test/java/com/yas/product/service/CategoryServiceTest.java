@@ -12,6 +12,7 @@ import com.yas.product.repository.ProductCategoryRepository;
 import com.yas.product.viewmodel.NoFileMediaVm;
 import com.yas.product.viewmodel.category.CategoryGetDetailVm;
 import com.yas.product.viewmodel.category.CategoryGetVm;
+import com.yas.product.viewmodel.category.CategoryPostVm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,44 @@ class CategoryServiceTest {
     void getCategoriesPageable_Success() {
         when(mediaService.getMedia(category.getImageId())).thenReturn(noFileMediaVm);
         Assertions.assertEquals(1, categoryService.getPageableCategories(0, 1).categoryContent().size());
-        CategoryGetVm categoryGetVm = categoryService.getCategories("a").getFirst();
+        CategoryGetVm categoryGetVm = categoryService.getCategories("name").getFirst();
         assertEquals("name", categoryGetVm.name());
+    }
+
+    @Test
+    void create_Success() {
+        CategoryPostVm postVm = new CategoryPostVm("new-category", "new-slug", "desc", null, "keywords", "metaDesc",
+                (short) 2, true, 1L);
+        Category createdCategory = categoryService.create(postVm);
+        assertNotNull(createdCategory);
+        assertEquals("new-category", createdCategory.getName());
+    }
+
+    @Test
+    void create_WithParent_Success() {
+        CategoryPostVm postVm = new CategoryPostVm("child-category", "child-slug", "desc", category.getId(), "keywords",
+                "metaDesc", (short) 2, true, 1L);
+        Category createdCategory = categoryService.create(postVm);
+        assertNotNull(createdCategory);
+        assertNotNull(createdCategory.getParent());
+        assertEquals("name", createdCategory.getParent().getName());
+    }
+
+    @Test
+    void update_Success() {
+        CategoryPostVm postVm = new CategoryPostVm("updated-name", "updated-slug", "desc", null, "keywords", "metaDesc",
+                (short) 3, false, 2L);
+        categoryService.update(postVm, category.getId());
+
+        Category updatedCategory = categoryRepository.findById(category.getId()).orElse(null);
+        assertNotNull(updatedCategory);
+        assertEquals("updated-name", updatedCategory.getName());
+        assertEquals("updated-slug", updatedCategory.getSlug());
+    }
+
+    @Test
+    void getTopNthCategories_Success() {
+        var topCategories = categoryService.getTopNthCategories(10);
+        assertNotNull(topCategories);
     }
 }
