@@ -105,6 +105,8 @@ class ProductDetailServiceTest {
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productOptionCombinationRepository.findAllByProduct(variation)).thenReturn(List.of(combination));
+        when(mediaService.getMedia(1L)).thenReturn(new NoFileMediaVm(1L, "thumb", "", "", "http://thumb"));
+        when(mediaService.getMedia(2L)).thenReturn(new NoFileMediaVm(2L, "img", "", "", "http://img"));
 
         ProductDetailInfoVm result = productDetailService.getProductDetailById(1L);
 

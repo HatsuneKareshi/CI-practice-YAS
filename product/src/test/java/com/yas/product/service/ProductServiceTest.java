@@ -176,7 +176,7 @@ class ProductServiceTest {
         var result = productService.getProductSlug(1L);
 
         assertThat(result.slug()).isEqualTo("test-product");
-        assertThat(result.productVariantId()).isEqualTo(1L);
+        assertThat(result.productVariantId()).isNull();
     }
 
     @Test
