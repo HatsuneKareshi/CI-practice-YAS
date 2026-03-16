@@ -156,6 +156,6 @@ class ProductServiceTest {
 
         assertThat(product.getName()).isEqualTo("Updated Product");
         assertThat(product.getSlug()).isEqualTo("updated-product");
-        verify(productRepository).save(any(Product.class));
+        verify(productRepository).saveAll(any());
     }
 }
