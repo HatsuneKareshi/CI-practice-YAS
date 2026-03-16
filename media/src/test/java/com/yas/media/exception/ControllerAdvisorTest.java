@@ -37,7 +37,7 @@ class ControllerAdvisorTest {
     @BeforeEach
     void setUp() {
         mockHttpServletRequest = mock(HttpServletRequest.class);
-        when(mockHttpServletRequest.getServletPath()).thenReturn("/test/path");
+        org.mockito.Mockito.lenient().when(mockHttpServletRequest.getServletPath()).thenReturn("/test/path");
         mockWebRequest = new ServletWebRequest(mockHttpServletRequest);
     }
 
