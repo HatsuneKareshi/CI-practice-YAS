@@ -104,4 +104,50 @@ class ProductServiceTest {
 
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void createProduct_ValidProductPostVm_ShouldSaveAndReturnProduct() {
+        com.yas.product.viewmodel.product.ProductPostVm postVm = new com.yas.product.viewmodel.product.ProductPostVm(
+                "Test Product", "test-product", 1L, List.of(1L), "Short Desc", "Description", "Specs",
+                "SKU-123", "GTIN-123", 100.0, com.yas.product.model.enumeration.DimensionUnit.CM, 10.0, 10.0, 10.0,
+                100.0,
+                true, true, true, true, true,
+                "Meta Title", "Meta Keyword", "Meta Desc", 1L, null, null, null, null, null,
+                1L);
+
+        when(brandRepository.findById(1L)).thenReturn(Optional.of(new com.yas.product.model.Brand()));
+        when(categoryRepository.findAllById(any())).thenReturn(List.of(new com.yas.product.model.Category()));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        when(productRepository.findBySlugAndIsPublishedTrue("test-product")).thenReturn(Optional.empty());
+        when(productRepository.findByGtinAndIsPublishedTrue("GTIN-123")).thenReturn(Optional.empty());
+        when(productRepository.findBySkuAndIsPublishedTrue("SKU-123")).thenReturn(Optional.empty());
+
+        var result = productService.createProduct(postVm);
+
+        assertThat(result).isNotNull();
+        assertThat(result.name()).isEqualTo("Test Product");
+        verify(productRepository, org.mockito.Mockito.times(2)).save(any(Product.class));
+        verify(productCategoryRepository).saveAll(any());
+        verify(productImageRepository).saveAll(any());
+    }
+
+    @Test
+    void updateProduct_ValidProductPutVm_ShouldUpdateExistingProduct() {
+        com.yas.product.viewmodel.product.ProductPutVm putVm = new com.yas.product.viewmodel.product.ProductPutVm(
+                "Updated Product", "updated-product", 200.0, true, true, true, true, true,
+                1L, List.of(1L), "Short Desc", "Description", "Specs", "SKU-321", "GTIN-321",
+                100.0, com.yas.product.model.enumeration.DimensionUnit.CM, 10.0, 10.0, 10.0,
+                "Meta", "Meta", "Meta", 1L, null, null, null, null, null, 1L);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(brandRepository.findById(1L)).thenReturn(Optional.of(new com.yas.product.model.Brand()));
+        when(categoryRepository.findAllById(any())).thenReturn(List.of(new com.yas.product.model.Category()));
+
+        productService.updateProduct(1L, putVm);
+
+        assertThat(product.getName()).isEqualTo("Updated Product");
+        assertThat(product.getSlug()).isEqualTo("updated-product");
+        verify(productRepository).save(any(Product.class));
+    }
 }
