@@ -129,7 +129,7 @@ class ProductServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.name()).isEqualTo("Test Product");
-        verify(productRepository, org.mockito.Mockito.times(2)).save(any(Product.class));
+        verify(productRepository, org.mockito.Mockito.times(1)).save(any(Product.class));
         verify(productCategoryRepository).saveAll(any());
         verify(productImageRepository).saveAll(any());
     }
@@ -147,6 +147,10 @@ class ProductServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(brandRepository.findById(1L)).thenReturn(Optional.of(new com.yas.product.model.Brand()));
         when(categoryRepository.findAllById(any())).thenReturn(List.of(new com.yas.product.model.Category()));
+
+        com.yas.product.model.ProductOption option = new com.yas.product.model.ProductOption();
+        option.setId(1L);
+        when(productOptionRepository.findAllByIdIn(any())).thenReturn(List.of(option));
 
         productService.updateProduct(1L, putVm);
 
