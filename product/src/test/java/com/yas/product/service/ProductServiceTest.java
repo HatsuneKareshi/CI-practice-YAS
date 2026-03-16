@@ -158,4 +158,53 @@ class ProductServiceTest {
         assertThat(product.getSlug()).isEqualTo("updated-product");
         verify(productRepository).saveAll(any());
     }
+
+    @Test
+    void deleteProduct_WhenProductExists_ShouldUnpublishProduct() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        productService.deleteProduct(1L);
+
+        assertThat(product.isPublished()).isFalse();
+        verify(productRepository).save(product);
+    }
+
+    @Test
+    void getProductSlug_WhenProductExists_ShouldReturnSlugGetVm() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        var result = productService.getProductSlug(1L);
+
+        assertThat(result.slug()).isEqualTo("test-product");
+        assertThat(result.productVariantId()).isEqualTo(1L);
+    }
+
+    @Test
+    void getProductByIds_ShouldReturnProductListVms() {
+        when(productRepository.findAllByIdIn(List.of(1L))).thenReturn(List.of(product));
+
+        var result = productService.getProductByIds(List.of(1L));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).name()).isEqualTo("Test Product");
+    }
+
+    @Test
+    void getProductByCategoryIds_ShouldReturnProductListVms() {
+        when(productRepository.findByCategoryIdsIn(List.of(1L))).thenReturn(List.of(product));
+
+        var result = productService.getProductByCategoryIds(List.of(1L));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).slug()).isEqualTo("test-product");
+    }
+
+    @Test
+    void getProductByBrandIds_ShouldReturnProductListVms() {
+        when(productRepository.findByBrandIdsIn(List.of(1L))).thenReturn(List.of(product));
+
+        var result = productService.getProductByBrandIds(List.of(1L));
+
+        assertThat(result).hasSize(1);
+    }
 }
