@@ -48,7 +48,7 @@ jobs:
           backoffice-bff/target/*-reports/*.xml
           backoffice-bff/target/site/jacoco/*
 
-    - name: enforce minimum coverage and PR comment
+    - name: PR comment jacoco coverage
       id: jacoco
       uses: madrapps/jacoco-report@v1.7.2
       with:
@@ -57,7 +57,20 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 70
         title: "backoffice-bff coverage"
-        fail_on_min_coverage: true
+        
+    - name: add jacoco coverage to job summary
+      run: |
+        echo "### Code Coverage Results" >> $GITHUB_STEP_SUMMARY
+        echo "- **Overall Coverage:** ${{ steps.jacoco.outputs.coverage-overall }}%" >> $GITHUB_STEP_SUMMARY
+        echo "- **Changed Files Coverage:** ${{ steps.jacoco.outputs.coverage-changed-files }}%" >> $GITHUB_STEP_SUMMARY
+
+    - name: publish test results
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure()
+      with:
+        report_paths: backoffice-bff/target/*-reports/TEST-*.xml
+        detailed_summary: true
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cache OWASP NVD DB
       uses: actions/cache@v4
@@ -77,3 +90,10 @@ jobs:
       with:
         name: backoffice-bff-owasp-report
         path: backoffice-bff/target/dependency-check-report.html
+    
+    - name: Fail PR if overall coverage is less than 70%
+      if: ${{ steps.jacoco.outputs.coverage-overall < 70.0 }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.setFailed('Overall coverage is less than 70%!')
